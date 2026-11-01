@@ -9,7 +9,7 @@ class User {
     }
 
     public static function getAll(PDO $db) {
-        return $db->query("SELECT * FROM users ORDER BY role, name")->fetchAll();
+        return $db->query("SELECT * FROM users ORDER BY created_at ASC, id ASC")->fetchAll();
     }
 
     public static function save(PDO $db, string $name, string $username, string $role, string $password = '', int $id = 0): bool {

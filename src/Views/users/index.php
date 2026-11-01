@@ -30,6 +30,46 @@ foreach ($users as $u) {
         $inactiveUsers++;
     }
 }
+
+    $customRoleColor = function (string $roleKey): string {
+      static $reservedRoleColors = [
+        '#1e40af',
+        '#16a34a',
+        '#7c3aed',
+        '#d97706',
+        '#0891b2',
+      ];
+      static $customRoleColors = [];
+
+      if (isset($customRoleColors[$roleKey])) {
+        return $customRoleColors[$roleKey];
+      }
+
+      $palette = [
+        '#dc2626', '#ea580c', '#ca8a04', '#16a34a', '#0f766e', '#0891b2',
+        '#2563eb', '#4f46e5', '#7c3aed', '#be185d', '#db2777', '#9333ea',
+        '#0284c7', '#059669', '#b45309', '#d946ef', '#14b8a6', '#f97316',
+      ];
+
+      $hash = crc32($roleKey);
+      $startIndex = $hash % count($palette);
+      $fallback = sprintf('#%06x', ($hash | 0x202020) & 0xFFFFFF);
+
+      for ($offset = 0; $offset < count($palette); $offset++) {
+        $color = $palette[($startIndex + $offset) % count($palette)];
+        if (!in_array($color, $reservedRoleColors, true) && !in_array($color, $customRoleColors, true)) {
+          $customRoleColors[$roleKey] = $color;
+          return $color;
+        }
+      }
+
+      if (in_array($fallback, $reservedRoleColors, true) || in_array($fallback, $customRoleColors, true)) {
+        $fallback = sprintf('#%06x', (($hash ^ 0x5f3759df) | 0x202020) & 0xFFFFFF);
+      }
+
+      $customRoleColors[$roleKey] = $fallback;
+      return $fallback;
+    };
 ?>
 
 <div class="kpi-grid mb-24 kpi-grid-3">
@@ -82,7 +122,7 @@ foreach ($users as $u) {
           foreach ($roles as $r) {
               $roleNames[$r['role_key']] = $r['display_name'];
           }
-          $color = $roleColors[$u['role']] ?? '#64748b';
+          $color = $roleColors[$u['role']] ?? $customRoleColor($u['role']);
         ?>
         <tr>
           <td>

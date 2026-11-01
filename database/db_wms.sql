@@ -840,7 +840,7 @@ CREATE TABLE `users` (
   `name` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('admin_gudang','petugas_gudang','divisi_penjualan','divisi_pembelian','manajemen') NOT NULL,
+  `role` varchar(50) NOT NULL,
   `avatar` varchar(10) DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
